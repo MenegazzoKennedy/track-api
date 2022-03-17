@@ -5,7 +5,6 @@ import nodemailer from "nodemailer";
 
 class SendTokenEmailController {
   async handle(request: Request, response: Response) {
-
     const { email } = request.body;
 
     const service = new SendTokenEmailService();
@@ -18,15 +17,15 @@ class SendTokenEmailController {
     localStorage.setItem("emailRecuperar", email);
 
     let transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smart.iagentesmtp.com.br",
+      port: 587,
       auth: {
-        user: "devtrackland@gmail.com",
-        pass: "Track@123*+"
-      }
+        user: "kennedy@maiscode.com.br",
+        pass: "d3223633",
+      },
     })
-
     const mailOptions = {
-      from: "api.trackland@gmail.com",
+      from: "kennedy@maiscode.com.br",
       to: email,
       subject: "Recuperação de Senha - Trackland",
       html: `
@@ -70,12 +69,12 @@ class SendTokenEmailController {
       
                     <h1 style="color: black;font-weight:600;font-size:20px;line-height:23px;margin-bottom:55px;">RECUPERAR
                       SENHA DE ACESSO</h1>
-      
+                    <br>
                     <span
                       style="display: block;color:#0059A9;font-weight:600;font-size:30px;line-height:35px;margin-bottom:48px;">
                       ${token}
                     </span>
-      
+                    <br>
                     <span style="display: block;font-size:14px;line-height:16px;color:#000;">
                       Foi solicitado a recuperação de acesso ao sistema de identificação.
                       Casso não tenha sido você que fes esta requisição, apenas ignore
@@ -100,7 +99,7 @@ class SendTokenEmailController {
 
     transporter.sendMail(mailOptions, (err) => {
       if (err) {
-        console.log(err)
+        return response.json(err);
       } else {
         return response.json({ message: "Email enviado com sucesso!" });
       }
